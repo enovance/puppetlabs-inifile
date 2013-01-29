@@ -39,27 +39,6 @@ module Util
       if (section.has_existing_setting?(setting))
         update_line(section, setting, value)
         section.update_existing_setting(setting, value)
-      elsif result = find_commented_setting(section, setting)
-        # So, this stanza is a bit of a hack.  What we're trying
-        # to do here is this: for settings that don't already
-        # exist, we want to take a quick peek to see if there
-        # is a commented-out version of them in the section.
-        # If so, we'd prefer to add the setting directly after
-        # the commented line, rather than at the end of the section.
-
-        # If we get here then we found a commented line, so we
-        # call "insert_inline_setting_line" to update the lines array
-        insert_inline_setting_line(result, section, setting, value)
-
-        # Then, we need to tell the setting object that we hacked
-        # in an inline setting
-        section.insert_inline_setting(setting, value)
-
-        # Finally, we need to update all of the start/end line
-        # numbers for all of the sections *after* the one that
-        # was modified.
-        section_index = @section_names.index(section_name)
-        increment_section_line_numbers(section_index + 1)
       else
         section.set_additional_setting(setting, value)
       end
